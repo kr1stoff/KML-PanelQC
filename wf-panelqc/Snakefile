@@ -1,0 +1,15 @@
+workdir: config["workdir"]
+
+
+shell.executable("/bin/bash")
+shell.prefix("set +eu; ")
+
+
+rule all:
+    input:
+        "panel-qc-summary.xlsx",
+
+
+include: "rules/fq_stats.smk"
+include: "rules/bam_stats.smk"
+include: "rules/all_summary.smk"
