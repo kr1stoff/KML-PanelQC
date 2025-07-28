@@ -43,9 +43,9 @@ depth_20_rate = target_depth[target_depth[2] > mean_depth * 0.2].shape[0] / targ
 depth_50_rate = target_depth[target_depth[2] > mean_depth * 0.5].shape[0] / target_size
 
 # * 输出
-outputs = [mapped_reads, mapped_rate, ontarget_reads, ontarget_rate, cover4x_rate, cover10x_rate,
-           cover30x_rate, cover50x_rate, cover100x_rate, mean_depth, depth_20_rate, depth_50_rate]
+outputs = [mapped_reads, mapped_rate, ontarget_reads, ontarget_rate, target_size, target_covered_size, covarage_rate,
+           cover4x_rate, cover10x_rate, cover30x_rate, cover50x_rate, cover100x_rate, mean_depth, depth_20_rate, depth_50_rate]
 outputs = [o if type(o) == int else round(o, 4) for o in outputs]
-df = pd.DataFrame([outputs], columns=['MappedReads', 'MappedRate', 'OnTargetReads', 'OnTargetRate', '4xCoverageRate',
-                  '10xCoverageRate', '30xCoverageRate', '50xCoverageRate', '100xCoverageRate', 'MeanDepth', '20xDepthRate', '50xDepthRate'])
+df = pd.DataFrame([outputs], columns=['MappedReads', 'MappedRate', 'OnTargetReads', 'OnTargetRate', 'TargetSize', 'TargetCoveredSize', 'CoverageRate',
+                  '4xCoverageRate', '10xCoverageRate', '30xCoverageRate', '50xCoverageRate', '100xCoverageRate', 'MeanDepth', '20xDepthRate', '50xDepthRate'])
 df.to_csv(snakemake.output[0], index=False)

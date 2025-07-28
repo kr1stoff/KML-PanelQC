@@ -25,6 +25,7 @@ rule bwa_mem:
 rule samtools_stat:
     input:
         rules.bwa_mem.output,
+        ".temp/target.sorted.bed",
     output:
         all_stat="bam_stats/{sample}.bam.stat",
         target_stat="bam_stats/{sample}.bam.target.stat",
@@ -37,14 +38,15 @@ rule samtools_stat:
     threads: config["threads"]["low"]
     shell:
         """
-        samtools stat {input} | grep ^SN | cut -f 2- > {output.all_stat} 2> {log}
-        samtools stat -t {config[bed]} {input} | grep ^SN | cut -f 2- > {output.target_stat} 2>> {log}
+        samtools stat {input[0]} | grep ^SN | cut -f 2- > {output.all_stat} 2> {log}
+        samtools stat -t {input[1]} {input[0]} | grep ^SN | cut -f 2- > {output.target_stat} 2>> {log}
         """
 
 
 rule samtools_depth:
     input:
         rules.bwa_mem.output,
+        ".temp/target.sorted.bed",
     output:
         "bam_stats/{sample}.bam.target.depth",
     benchmark:
@@ -54,7 +56,7 @@ rule samtools_depth:
     conda:
         config["conda"]["basic"]
     shell:
-        "samtools depth -b {config[bed]} -a {input} -o {output} 2> {log}"
+        "samtools depth -b {input[1]} -a {input[0]} -o {output} 2> {log}"
 
 
 rule bam_stats:

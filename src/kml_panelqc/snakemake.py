@@ -51,6 +51,7 @@ def run_snakemake(input_tab: str, workdir: Path, threads: int, reference: str, b
     snakemake -c {threads} --use-conda -s {snakefile} --configfile {configfile} --ignore-incomplete --scheduler greedy
     conda deactivate
     """
+    logging.debug(cml)
     proc = run(cml, shell=True, executable='/bin/bash', capture_output=True, encoding='utf-8')
     # 输出出来这段日志
     with open(logfile, 'w') as f:

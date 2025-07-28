@@ -13,3 +13,4 @@ rule all:
 include: "rules/fq_stats.smk"
 include: "rules/bam_stats.smk"
 include: "rules/all_summary.smk"
+include: "rules/prepare_ref.smk"
