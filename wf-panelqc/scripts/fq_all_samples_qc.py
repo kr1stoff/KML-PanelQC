@@ -14,8 +14,8 @@ def fastp_all_samples_qc(files_fastp_json, out_tsv):
     for js_path in files_fastp_json:
         js_data = json.loads(open(js_path, "r").read())
         sample = Path(js_path).stem
-        mean_lengths = np.array(
-            [v for k, v in js_data["summary"]["after_filtering"].items() if k.endswith("mean_length")])
+        mean_lengths = [v for k, v in js_data["summary"]["after_filtering"].items()
+                        if k.endswith("mean_length")]
         out = [
             sample,
             js_data["summary"]["before_filtering"]["total_reads"],
@@ -26,7 +26,8 @@ def fastp_all_samples_qc(files_fastp_json, out_tsv):
             js_data["summary"]["before_filtering"]["q30_rate"],
             js_data["summary"]["after_filtering"]["q20_rate"],
             js_data["summary"]["after_filtering"]["q30_rate"],
-            int(mean_lengths.mean()),
+            int(np.mean(mean_lengths)),
+
             js_data["summary"]["after_filtering"]["gc_content"],
             js_data["duplication"]["rate"],
         ]
