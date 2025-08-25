@@ -3,7 +3,7 @@ rule bwa_mem:
         ".rawdata/{sample}_1.fastq.gz",
         ".rawdata/{sample}_2.fastq.gz",
     output:
-        "bam_stats/{sample}.bam",
+        temp("bam_stats/{sample}.bam"),
     benchmark:
         ".log/bam_stats/{sample}.bwa_mem.bm"
     log:
