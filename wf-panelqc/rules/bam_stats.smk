@@ -1,7 +1,9 @@
 rule bwa_mem:
     input:
-        ".rawdata/{sample}_1.fastq.gz",
-        ".rawdata/{sample}_2.fastq.gz",
+        ref=rules.copy_reference.output,
+        bwa_index=rules.prepare_bwa_index.output,
+        fq1=".rawdata/{sample}_1.fastq.gz",
+        fq2=".rawdata/{sample}_2.fastq.gz",
     output:
         temp("bam_stats/{sample}.bam"),
     benchmark:
@@ -16,7 +18,7 @@ rule bwa_mem:
     threads: config["threads"]["high"]
     shell:
         """
-        bwa mem -t {threads} {params.bwa} {config[reference]} {input} 2> {log} | \
+        bwa mem -t {threads} {params.bwa} {input.ref} {input.fq1} {input.fq2} 2> {log} | \
             samtools view -@ {threads} {params.view} - 2>> {log} | \
             samtools sort -@ {threads} -o {output} - 2>> {log}
         """
@@ -25,7 +27,7 @@ rule bwa_mem:
 rule samtools_stat:
     input:
         rules.bwa_mem.output,
-        ".temp/target.sorted.bed",
+        "prepare/target.sorted.bed",
     output:
         all_stat="bam_stats/{sample}.bam.stat",
         target_stat="bam_stats/{sample}.bam.target.stat",
@@ -46,7 +48,7 @@ rule samtools_stat:
 rule samtools_depth:
     input:
         rules.bwa_mem.output,
-        ".temp/target.sorted.bed",
+        "prepare/target.sorted.bed",
     output:
         "bam_stats/{sample}.bam.target.depth",
     benchmark:

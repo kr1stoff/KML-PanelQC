@@ -7,6 +7,8 @@ rule all_summary:
         "panel-qc-summary.xlsx",
     benchmark:
         ".log/all_summary.bm"
+    params:
+        pipeline = config["pipeline"],
     log:
         ".log/all_summary.log",
     conda:

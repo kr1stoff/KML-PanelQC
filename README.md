@@ -11,10 +11,11 @@
 
 ## 命令行
 
-- poetry 运行
+- 主程序
+  1.浩博 HBV
 
   ```bash
-  poetry run python -m src.kml_panelqc \
+  ~/miniforge3/envs/python3.12/bin/python -m src.kml_panelqc \
     --input-tab /data/mengxf/Project/KML250721-cyp2d6-igtk/work/input-table/igtk-samples.tsv \
     --output-dir /data/mengxf/Project/KML250721-cyp2d6-igtk/results/250725 \
     --reference /data/mengxf/Database/reference/hg38/hg38.fa \

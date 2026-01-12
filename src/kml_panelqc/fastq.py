@@ -19,7 +19,8 @@ def prepare_fastq_by_samptab(workdir: Path, samptab: str, threads: int) -> None:
     workdir.joinpath('.rawdata').mkdir(exist_ok=True, parents=True)
     df = samptab2dataframe(samptab)
     # * 多线程软链接或解压
-    pargs = [(workdir, row[1][0], row[1][1], row[1][2]) for row in df.iterrows()]
+    pargs = [(workdir, row[1][0], row[1][1], row[1][2])
+             for row in df.iterrows()]
     with Pool(threads) as pool:
         pool.map(copy_fastq, pargs)
 
@@ -44,7 +45,6 @@ def copy_fastq(para_args: tuple) -> None:
         gzip -c {fq1} > {workdir}/.rawdata/{name}_1.fastq.gz
         gzip -c {fq2} > {workdir}/.rawdata/{name}_2.fastq.gz
         """
-    logging.debug(cml)
     run(cml, shell=True, executable='/bin/bash', capture_output=True)
 
 
@@ -70,7 +70,8 @@ def samptab2dataframe(samptab: str) -> pd.DataFrame:
     elif samptab.endswith('.tsv') or samptab.endswith('.txt'):
         df = pd.read_table(samptab, sep='\t', header=None)
     else:
-        raise ValueError(f'sample table 扩展名必须是 .xlsx or .tsv or .txt : {samptab}')
+        raise ValueError(
+            f'sample table 扩展名必须是 .xlsx or .tsv or .txt : {samptab}')
     # 检查 sample table
     check_samptab(df)
     return df
@@ -86,7 +87,8 @@ def check_samptab(df) -> None:
         name, fastq1, fastq2 = row[1]
         # 检查名称
         pattern = r'[\\/:*?"<>| ]'
-        assert not re.search(pattern, name), f'样本名称含有非法字符 (\\/:*?"<>| ) : {name}'
+        assert not re.search(
+            pattern, name), f'样本名称含有非法字符 (\\/:*?"<>| ) : {name}'
         # 检查 fastq 是否存在
         assert Path(fastq1).exists(), f'fastq1 不存在 : {fastq1}'
         assert Path(fastq2).exists(), f'fastq2 不存在 : {fastq2}'

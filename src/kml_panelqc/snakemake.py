@@ -9,7 +9,7 @@ from src.config.env import CONDA_ENV_DICT
 from src.config.software import ACTIVATE
 
 
-def create_snakemake_configfile(input_tab: str, workdir: Path, threads: int, reference: str, bed: str) -> str:
+def create_snakemake_configfile(input_tab: str, workdir: Path, threads: int, reference: str, bed: str, pipeline: str) -> str:
     """创建 snakemake 配置文件"""
     logging.info('创建 snakemake 配置文件')
     samples = get_sample_names_by_samptab(input_tab)
@@ -22,6 +22,7 @@ def create_snakemake_configfile(input_tab: str, workdir: Path, threads: int, ref
         'conda': CONDA_ENV_DICT,
         'reference': reference,
         'bed': bed,
+        'pipeline': pipeline,
     }
     configfile = f'{workdir}/.temp/snakemake.yaml'
     with open(configfile, 'w') as f:
@@ -29,7 +30,7 @@ def create_snakemake_configfile(input_tab: str, workdir: Path, threads: int, ref
     return configfile
 
 
-def run_snakemake(input_tab: str, workdir: Path, threads: int, reference: str, bed: str) -> None:
+def run_snakemake(configfile: str, workdir: Path, threads: int) -> None:
     """
     运行 snakemake 工作流
     :param input_tab:       样本信息表, 样本名/read1/read2
@@ -40,10 +41,9 @@ def run_snakemake(input_tab: str, workdir: Path, threads: int, reference: str, b
     :return:
     """
     logging.info('运行 snakemake')
-    # 创建 snakemake 配置文件
-    configfile = create_snakemake_configfile(input_tab, workdir, threads, reference, bed)
     # 运行 snakemake 流程
-    snakefile = Path(__file__).resolve().parents[2].joinpath('wf-panelqc/Snakefile')
+    snakefile = Path(__file__).resolve(
+    ).parents[2].joinpath('wf-panelqc/Snakefile')
     logfile = f'{workdir}/.temp/snakemake.log'
     cml = f"""
     source {ACTIVATE} snakemake
@@ -52,7 +52,8 @@ def run_snakemake(input_tab: str, workdir: Path, threads: int, reference: str, b
     conda deactivate
     """
     logging.debug(cml)
-    proc = run(cml, shell=True, executable='/bin/bash', capture_output=True, encoding='utf-8')
+    proc = run(cml, shell=True, executable='/bin/bash',
+               capture_output=True, encoding='utf-8')
     # 输出出来这段日志
     with open(logfile, 'w') as f:
         f.write(f'[STDOUT]\n{proc.stdout}\n[STDERR]\n{proc.stderr}')
