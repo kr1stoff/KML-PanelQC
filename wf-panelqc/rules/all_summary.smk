@@ -8,7 +8,7 @@ rule all_summary:
     benchmark:
         ".log/all_summary.bm"
     params:
-        pipeline = config["pipeline"],
+        pipeline=config["pipeline"],
     log:
         ".log/all_summary.log",
     conda:

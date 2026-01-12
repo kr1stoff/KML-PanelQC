@@ -1,36 +1,21 @@
 rule copy_reference:
-        input:
-            ref=config["reference"],
-        output:
-            temp("prepare/ref.fa"),
-        benchmark:
-            ".log/prepare/copy_reference.bm"
-        log:
-            ".log/prepare/copy_reference.log",
-        shell:
-            "cp {input.ref} {output}"
-
-
-rule prepare_reference_fai:
     input:
-        rules.copy_reference.output,
+        ref=config["reference"],
     output:
-        "prepare/ref.fa.fai",
+        temp("prepare/ref.fa"),
     benchmark:
-        ".log/prepare/prepare_reference_fai.bm"
+        ".log/prepare/copy_reference.bm"
     log:
-        ".log/prepare/prepare_reference_fai.log",
-    conda:
-        config["conda"]["basic2"]
+        ".log/prepare/copy_reference.log",
     shell:
-        "samtools faidx {input}"
+        "cp {input.ref} {output}"
 
 
 rule prepare_bwa_index:
     input:
         rules.copy_reference.output,
     output:
-        multiext(rules.copy_reference.output[0], ".amb", ".ann", ".bwt", ".pac", ".sa")
+        multiext(rules.copy_reference.output[0], ".amb", ".ann", ".bwt", ".pac", ".sa"),
     benchmark:
         ".log/prepare/prepare_bwa_index.bm"
     log:

@@ -22,13 +22,13 @@ mapped_reads = int(all_stats['reads mapped and paired'])
 mapped_rate = mapped_reads / int(all_stats['raw total sequences'])
 # 在靶率 (target) reads mapped and paired / (all) reads mapped and paired
 ontarget_reads = int(target_stats['reads mapped and paired'])
-ontarget_rate = ontarget_reads / mapped_reads
+ontarget_rate = ontarget_reads / mapped_reads if mapped_reads > 0 else 0
 
 target_depth = pd.read_table(snakemake.input[2], header=None)
 # 覆盖率
 target_size = target_depth.shape[0]
 target_covered_size = target_depth[target_depth[2] > 0].shape[0]
-covarage_rate = target_covered_size / target_size
+covarage_rate = target_covered_size / target_size if target_size > 0 else 0
 # target_size, target_covered_size, covarage_rate
 
 # 4X/10X/30X/50X/100X 覆盖深度
